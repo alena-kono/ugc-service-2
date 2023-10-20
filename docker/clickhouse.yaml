@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  clickhouse-server-node-0:
+    image: yandex/clickhouse-server
+    container_name: clickhouse-server-node-0
+    hostname: clickhouse-server-node-0
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - ./clickhouse/node_0:/etc/clickhouse-server
+    depends_on:
+      - zookeeper

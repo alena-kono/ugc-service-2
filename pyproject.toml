@@ -1,0 +1,22 @@
+[tool.black]
+line-length = 88
+
+[tool.mypy]
+files = "backend/"
+ignore_missing_imports = "True"
+strict_optional = "True"
+plugins = ["pydantic.mypy"]
+
+[tool.bandit]
+exclude_dirs = ["tests"]
+tests = ["B201", "B301"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.flake8]
+ignore = ["E501", "A003", "VNE003", "B008"]
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::DeprecationWarning"]

@@ -1,0 +1,78 @@
+[tool.poetry]
+name = "src"
+version = "0.1.0"
+description = ""
+authors = ["Nikita Smirnov", "Alena Konovalova", "Pavel Eroshkin"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.11"
+clickhouse-driver = "^0.2.6"
+kafka-python = "^2.0.2"
+aiokafka = "^0.8.1"
+pydantic = { version = "^1.10.8", extras = ["dotenv"] }
+orjson = "^3.9.9"
+asynch = "^0.2.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.2"
+ruff = "^0.0.292"
+mypy = "^1.6.0"
+bandit = "^1.7.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::RuntimeWarning",
+    "ignore::pytest.PytestCollectionWarning"
+]
+
+[tool.ruff]
+exclude = [
+    ".git",
+    "docs",
+    "build",
+    "dist",
+    "venv"
+]
+line-length = 100
+target-version = "py310"
+fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
+select = [
+  "E",   # pycodestyle
+  "F",   # pyflakes
+  "UP",  # pyupgrade,
+  "I",   # isort
+]
+ignore = [
+    "A003",
+    "B008",
+    "D104",
+    "D202",
+    "D205",
+    "D301",
+    "D400",
+    "E501",
+    "PGH003",
+    "PLR0911",
+    "PLR2004",
+    "RET504",
+    "RET506",
+    "TRY003",
+    "TRY300",
+]
+
+[tool.ruff.isort]
+lines-after-imports = 2
+lines-between-types = 1
+section-order = ["future", "standard-library", "first-party", "local-folder", "third-party"]
+
+[tool.mypy]
+files = "src/"
+ignore_missing_imports = "True"
+warn_no_return = "False"
+strict_optional = "True"
+plugins = ["pydantic.mypy"]

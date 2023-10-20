@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  vertica:
+    container_name: vertica-ce
+    image: jbfavre/vertica:latest
+    ports:
+      - "5433:5433"
