@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "mongo-vs-all"
+version = "0.1.0"
+description = ""
+authors = ["nikita zigman <zigman.nikita@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "mongo_vs_all" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pymongo = "^4.5.0"
+ipykernel = "^6.25.2"
+ipython = "^8.16.1"
+clickhouse-driver = "^0.2.6"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

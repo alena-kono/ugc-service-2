@@ -1,4 +1,4 @@
-# UGC Service (Sprint 9)
+a# UGC Service (Sprint 9)
 
 **[Link to the project to be reviewed](https://github.com/alena-kono/ugc-service-2)**
 
@@ -31,6 +31,44 @@ Insert test:
 Select test:
 * 1000 rows 1000 times
 * Average select time: 0.040490149666002256 sec
+
+## UGC db research
+
+### General description
+The MongoDB and ClickHouse databases were configured to run as a cluster with two shards, and each shard had one replica.
+
+Example of test data structure.
+```python
+{'user_id': '710b7656-2f5e-446e-aade-c04d7bf3c4ec',
+ 'film_id': '2738bd76-57c8-4f27-bcc4-68260c4a26c4',
+ 'comment': 'Tempor amet ut lorem eiusmod do amet adipiscing do do labore magna aliqua sit ipsum elit adipiscing lorem magna dolore dolor aliqua tempor incididunt amet aliqua aliqua adipiscing magna eiusmod sed labore dolor ut ut et do incididunt magna labore sed consectetur amet eiusmod tempor amet adipiscing e',
+ 'timestamp': datetime.datetime(2023, 10, 21, 13, 52, 48, 679723)}
+```
+
+Find more information about the experiment [here](backend/research/mongo_vs_all/mongo_test.ipynb)
+
+
+### ClickHouse
+#### Insert batch test:
+* Batch size = 1000.  10000 batches had been inserted
+* Insertion took 233.7237 seconds
+* average insertion time: 0.0234 seconds
+
+#### Read batch test
+* Batch size = 1000.
+* Reads Number = 1000 times 
+* Average select time: 0.012428301582986023 sec
+
+### MongoDB
+#### Insert batch test:
+* Batch size = 1000.  10000 batches had been inserted
+* Insertion took 181.6199 seconds
+* average insertion time: 0.0182 seconds
+
+#### Read batch test
+* Batch size = 1000.
+* Reads Number = 1000 times 
+* Average select time: 0.005184496374975424 sec
 
 
 ## SERVICE PORTS MAPPING FOR THE LOCAL DEVELOPMENT
