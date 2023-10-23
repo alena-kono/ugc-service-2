@@ -3,6 +3,7 @@ version: "3.8"
 include:
   - kafka.yaml
   - clickhouse.yaml
+  - mongo.yaml
 
 services:
   jaeger:
@@ -44,7 +45,7 @@ services:
     volumes:
       - films_db:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U films -d films_db" ]
+      test: ["CMD-SHELL", "pg_isready -U films -d films_db"]
       interval: 5s
       timeout: 5s
       retries: 10
