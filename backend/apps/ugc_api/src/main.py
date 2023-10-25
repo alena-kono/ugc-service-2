@@ -10,10 +10,12 @@ from opentelemetry import trace
 from redis import asyncio as aioredis
 from src.settings.app import get_app_settings
 from src.tracer.config import configure_tracer
-from src.ugc import database
+from src.utils import databases
 from src.ugc.api.v1.routers import router
 from starlette.middleware.sessions import SessionMiddleware
 from aiokafka import AIOKafkaProducer
+from motor.motor_asyncio import AsyncIOMotorClient
+
 
 settings = get_app_settings()
 logging.config.dictConfig(settings.logging.config)
@@ -21,8 +23,8 @@ logging.config.dictConfig(settings.logging.config)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    database.redis = aioredis.from_url(settings.redis.dsn, encoding="utf-8")
-    database.producer = AIOKafkaProducer(
+    databases.redis = aioredis.from_url(settings.redis.dsn, encoding="utf-8")
+    databases.producer = AIOKafkaProducer(
         bootstrap_servers=settings.kafka.dsn,
         compression_type="gzip",
         enable_idempotence=True,
@@ -31,14 +33,16 @@ async def lifespan(app: FastAPI):
         request_timeout_ms=10000,
         retry_backoff_ms=1000,
     )
+    databases.mongodb = AsyncIOMotorClient(settings.mongo.dsn)
 
-    await database.producer.start()
-    await FastAPILimiter.init(database.redis)
+    await databases.producer.start()
+    await FastAPILimiter.init(databases.redis)
 
     yield
 
-    await database.redis.close()
-    await database.producer.stop()
+    await databases.mongodb.close()
+    await databases.redis.close()
+    await databases.producer.stop()
 
 
 app = FastAPI(

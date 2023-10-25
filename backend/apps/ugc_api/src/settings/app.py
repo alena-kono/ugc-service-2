@@ -8,6 +8,7 @@ from src.settings.rate_limiter import RateLimiterSettings
 from src.settings.redis import RedisSettings
 from src.settings.service import ServiceSettings
 from src.settings.kafka import KafkaSettings
+from src.settings.mongo import MongoSettings
 
 
 class AppSettings(BaseAppSettings):
@@ -18,6 +19,7 @@ class AppSettings(BaseAppSettings):
     rate_limiter = RateLimiterSettings()
     jaeger = JaegerSettings()
     kafka = KafkaSettings()
+    mongo = MongoSettings()
 
 
 @lru_cache(maxsize=1)
