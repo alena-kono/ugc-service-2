@@ -3,4 +3,6 @@ from enum import StrEnum, auto, unique
 
 @unique
 class TopicTypes(StrEnum):
-    views = auto()
+    film_progress = auto()
+    like = auto()
+    comment = auto()
