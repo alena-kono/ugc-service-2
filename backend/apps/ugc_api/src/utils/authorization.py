@@ -5,9 +5,23 @@ from fastapi import HTTPException, Request
 from fastapi.security import HTTPBearer
 from jose import jwt
 from src.settings.app import get_app_settings
-from src.ugc.schemas import JwtClaims
+from utils.base_schema import BaseSchema
 
 settings = get_app_settings()
+
+
+class JwtUserSchema(BaseSchema):
+    id: str
+    permissions: list[str]
+
+
+class JwtClaims(BaseSchema):
+    user: JwtUserSchema
+    access_jti: str
+    refresh_jti: str
+    type: str
+    exp: int
+    iat: int
 
 
 def decode_token(token: str) -> JwtClaims | None:
