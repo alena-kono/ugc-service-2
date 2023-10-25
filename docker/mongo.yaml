@@ -6,7 +6,7 @@ services:
     image: mongo
     command: mongod --shardsvr --replSet mongors --dbpath /data/db --port 27017
     ports:
-      - "27017"
+      - "27017:27017"
     expose:
       - "27017"
     volumes:
@@ -30,7 +30,7 @@ services:
       - mongocfg
     command: mongos --configdb mongorsconf/mongocfg:27017 --port 27017 --bind_ip_all
     ports:
-      - 27017:27017
+      - 27019:27017
     expose:
       - "27017"
     volumes:
