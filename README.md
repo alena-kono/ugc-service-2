@@ -89,6 +89,21 @@ Find more information about the experiment [here](backend/research/mongo_vs_all/
 
 ## HOW TO
 
+### How to setup the mongo cluster
+1. start dev compose
+
+    `./scripts/dev.sh up -d`
+2. setup the cfg mongo server
+
+    `docker exec -it mongocfg1 bash -c 'echo "rs.initiate({_id: \"mongorsconf\", configsvr: true, members: [{_id: 0, host: \"mongocfg1\"}]})" | mongosh'`
+3. setup the mongo shard
+
+    `docker exec -it mongors1n1 bash -c 'echo "rs.initiate({_id: \"mongors\", members: [{_id: 0, host: \"mongors\"}]})" | mongosh'`
+4. add the shard to the cluster
+
+    `docker exec -it mongos1 bash -c 'echo "sh.addShard(\"mongors/mongors\")" | mongosh'`
+
+
 ### HOW TO START
 
 0. Create the `.env` files for each application in the `backend/apps` folder
