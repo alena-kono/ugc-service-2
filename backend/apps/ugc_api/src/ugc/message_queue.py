@@ -4,6 +4,10 @@ from aiokafka import AIOKafkaProducer
 from fastapi import HTTPException
 
 
+def build_key(film_id: str, user_id: str) -> str:
+    return f"{user_id}{film_id}"
+
+
 class IMessageQueue(ABC):
     @abstractmethod
     async def push(self, topic: str, message: bytes, key: bytes | None = None) -> None:
@@ -20,7 +24,7 @@ class IMessageQueue(ABC):
 class KafkaMessageQueue(IMessageQueue):
     """Redis implementation."""
 
-    TIMEOUT_SECONDS = 60
+    TIMEOUT_SECONDS = 10
 
     def __init__(self, kafka_producer: AIOKafkaProducer):
         self.producer = kafka_producer
