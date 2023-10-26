@@ -27,19 +27,6 @@ class ILikeService(ABC):
             None: No return value.
         """
 
-    # @abstractmethod
-    # async def update_like_record(
-    #     self, update_request_body: LikeUpdateRequestSchema, user_id: str, like_id: str
-    # ) -> LikeUpdateResponseSchema:
-    #     """Method handle event from the client and send it to the queue.
-
-    #     Args:
-    #         event (str): Event to be handled.
-
-    #     Returns:
-    #         None: No return value.
-    #     """
-
     @abstractmethod
     async def get_total_likes(self, film_id: str) -> TotalLikesResponseSchema:
         """Method handle event from the client and send it to the queue.
@@ -103,7 +90,7 @@ class LikeService(ILikeService):
             ),
         )
 
-        stored_instance = await self.repository.get_list(
+        stored_instance, *_ = await self.repository.get_list(
             filters=filters,
             limit=1,
             collection=self.LIKES_NAMESPACE,
@@ -119,22 +106,27 @@ class LikeService(ILikeService):
         return TotalLikesResponseSchema(total_likes=total_likes, film_id=film_id)
 
     async def get_average_rank(self, film_id: str) -> AverageRankResponseSchema:
-        average_film_rank = await self.repository.aggregate(
+        pipeline = [
+            {"$match": {"film_id": film_id}},
+            {"$group": {"_id": "$film_id", "average_rank": {"$avg": "$rank"}}},
+        ]
+
+        average_film_rank, *_ = await self.repository.aggregate(
             collection=self.LIKES_NAMESPACE,
-            filters={"film_id": film_id, "average_rank": {"$avg": "$rank"}},
+            filters=pipeline,
         )
 
-        return AverageRankResponseSchema(**average_film_rank)
+        return AverageRankResponseSchema(**{**average_film_rank, "film_id": film_id})
 
     async def get_user_like(self, film_id: str, user_id: str) -> LikeResponseSchema:
-        like = await self.repository.get_list(
+        like, *_ = await self.repository.get_list(
             collection=self.LIKES_NAMESPACE,
             limit=1,
             filters={"film_id": film_id, "user_id": user_id},
         )
         # * like is a list of dicts, so we need to get the first element
         # * because we expect only one like per user per film
-        return LikeResponseSchema(**like[0])
+        return LikeResponseSchema(**like)
 
 
 def get_service(

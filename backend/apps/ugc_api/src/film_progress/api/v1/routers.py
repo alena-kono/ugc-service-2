@@ -1,7 +1,7 @@
 import logging
 
-from fastapi import APIRouter
-from fastapi_pagination import Page
+from fastapi import APIRouter, Depends
+from fastapi_pagination import Page, Params
 
 from src.common.dependencies import RateLimiterType, UserToken
 from src.film_progress import schemas
@@ -42,5 +42,8 @@ async def get_unfinished_films(
     _: RateLimiterType,
     service: FilmServiceType,
     user: UserToken,
+    pagination_params: Params = Depends(),
 ) -> Page[schemas.FilmProgressCreateResponseSchema]:
-    return await service.get_unfinished_films(user_id=user.user.id)
+    return await service.get_unfinished_films(
+        user_id=user.user.id, pagination_params=pagination_params
+    )
