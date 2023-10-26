@@ -44,7 +44,11 @@ class IRepository(ABC):
 
     @abstractmethod
     async def get_list(
-        self, collection: str, limit: int, filters: dict[str:str]
+        self,
+        collection: str,
+        filters: dict[str:str],
+        skip: int = 0,
+        limit: int | None = None,
     ) -> list[dict]:
         """get a list of records from the repository
 
@@ -70,7 +74,9 @@ class IRepository(ABC):
         """
 
     @abstractmethod
-    async def aggregate(self, collection: str, filters: dict[str:str]) -> int:
+    async def aggregate(
+        self, collection: str, filters: dict[str:str], limit: int | None = None
+    ) -> list[dict]:
         """aggregate records in the repository
 
         Args:
@@ -104,7 +110,7 @@ class MongoRepository(IRepository):
 
     async def get_by_id(self, entity_id: str, collection: str) -> dict:
         cursor = await self.client[self.db_name][collection].find_one(
-            {"_id": entity_id}
+            {"_id": ObjectId(entity_id)}
         )
 
         if cursor is None:
@@ -113,13 +119,20 @@ class MongoRepository(IRepository):
         return cursor
 
     async def get_list(
-        self, collection: str, limit: int, filters: dict[str:str]
+        self,
+        collection: str,
+        filters: dict[str:str],
+        skip: int = 0,
+        limit: int | None = None,
     ) -> list[dict]:
         cursor = self.client[self.db_name][collection].find(filters)
-        return await cursor.to_list(length=limit)
+        return await cursor.skip(skip).to_list(length=limit)
 
     async def count(self, collection: str, filters: dict[str:str]) -> int:
         return await self.client[self.db_name][collection].count_documents(filters)
 
-    async def aggregate(self, collection: str, filters: dict[str:str]) -> int:
-        return await self.client[self.db_name][collection].aggregate(filters)
+    async def aggregate(
+        self, collection: str, filters: dict[str:str], limit: int | None = None
+    ) -> list[dict]:
+        cursor = self.client[self.db_name][collection].aggregate(pipeline=filters)
+        return await cursor.to_list(length=limit)
