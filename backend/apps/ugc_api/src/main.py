@@ -16,6 +16,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from src.common import databases
 from src.film_progress.api.v1.routers import router as film_progress_router
 from src.likes.api.v1.routers import router as likes_router
+from src.reviews.api.v1.routers import router as reviews_router
 from src.settings.app import get_app_settings
 from src.tracer.config import configure_tracer
 
@@ -92,6 +93,7 @@ async def setup_request_id_for_jaeger(
 
 app.include_router(film_progress_router, prefix="/api/v1", tags=["film_progress"])
 app.include_router(likes_router, prefix="/api/v1", tags=["likes"])
+app.include_router(reviews_router, prefix="/api/v1", tags=["reviews"])
 
 app.add_middleware(SessionMiddleware, secret_key=settings.auth.secret_key)
 
