@@ -1,7 +1,7 @@
 import asyncio
 from abc import ABC, abstractmethod
 
-from fastapi_pagination import Page, paginate
+from fastapi_pagination import Page, Params
 
 from src.common.dependencies import MessageQueueType, RepositoryType
 from src.common.message_queue import IMessageQueue, build_key
@@ -29,7 +29,9 @@ class IFilmProgressService(ABC):
 
     @abstractmethod
     async def get_unfinished_films(
-        self, user_id: str
+        self,
+        pagination_params: Params,
+        user_id: str,
     ) -> Page[FilmProgressResponseSchema]:
         """Method handle event from the client and send it to the queue.
 
@@ -76,14 +78,25 @@ class FilmProgressService(IFilmProgressService):
 
     # TODO: optimize request to the database to read with offset and limit
     async def get_unfinished_films(
-        self, user_id: str
+        self,
+        pagination_params: Params,
+        user_id: str,
     ) -> Page[FilmProgressResponseSchema]:
-        films = await self.repository.get_list(
-            collection=self.FILM_PROGRESS_NAMESPACE,
-            limit=None,
-            filters={"user_id": user_id},
+        skip = (pagination_params.page - 1) * pagination_params.size
+
+        films, total = await asyncio.gather(
+            self.repository.get_list(
+                collection=self.FILM_PROGRESS_NAMESPACE,
+                skip=skip,
+                limit=pagination_params.size,
+                filters={"user_id": user_id},
+            ),
+            self.repository.count(
+                collection=self.FILM_PROGRESS_NAMESPACE,
+                filters={"user_id": user_id},
+            ),
         )
-        return paginate(films)
+        return Page.create(items=films, params=pagination_params, total=total)
 
 
 def get_service(
