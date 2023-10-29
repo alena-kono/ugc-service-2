@@ -25,7 +25,7 @@ from starlette.middleware.sessions import SessionMiddleware
 settings = get_app_settings()
 
 logging.config.dictConfig(settings.logging.config)
-configure_logger()
+configure_logger(enable_async_logger=False)
 
 logger = structlog.get_logger()
 

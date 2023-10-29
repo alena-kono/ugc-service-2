@@ -23,7 +23,9 @@ class LoggingSettings(BaseAppSettings):
     level: LoggerLevelType = pydantic.Field(
         env="LOGGING_LEVEL", default=LoggerLevelType.DEBUG
     )
-    json_log_file_path: str = pydantic.Field(default="../../../logs/apps/auth.log")
+    file_path_json: str = pydantic.Field(
+        env="LOGGING_FILE_PATH_JSON", default="../../../logs/apps/auth.log"
+    )
 
     @property
     def config(self) -> dict[str, tp.Any]:
@@ -53,7 +55,7 @@ class LoggingSettings(BaseAppSettings):
                     "atTime": datetime.time(hour=0),
                     "interval": 1,
                     "backupCount": 2,
-                    "filename": self.json_log_file_path,
+                    "filename": self.file_path_json,
                     "formatter": "json_formatter",
                 },
             },
@@ -66,8 +68,18 @@ class LoggingSettings(BaseAppSettings):
         }
 
 
-def configure_logger() -> None:
-    """Configure structlog logger."""
+def configure_logger(enable_async_logger: bool = False) -> None:
+    """Configure structlog logger.
+
+    Args:
+        enable_async_logger: Enable async logger. Default: False.
+
+    Returns:
+        None.
+
+    Note:
+        Async logger should be called within async context.
+    """
     shared_processors = [
         structlog.contextvars.merge_contextvars,
         structlog.stdlib.filter_by_level,
@@ -82,10 +94,14 @@ def configure_logger() -> None:
         structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
     ]
 
+    logger_wrapper = structlog.stdlib.BoundLogger
+    if enable_async_logger:
+        logger_wrapper = structlog.stdlib.AsyncBoundLogger
+
     structlog.configure(
         processors=shared_processors,
         logger_factory=structlog.stdlib.LoggerFactory(),
-        wrapper_class=structlog.stdlib.BoundLogger,
+        wrapper_class=logger_wrapper,
         cache_logger_on_first_use=True,
     )
 
