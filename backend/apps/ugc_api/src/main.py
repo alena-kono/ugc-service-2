@@ -43,7 +43,7 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    await databases.mongodb.close()
+    databases.mongodb.close()
     await databases.redis.close()
     await databases.producer.stop()
 
