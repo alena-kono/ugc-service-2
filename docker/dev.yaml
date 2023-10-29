@@ -6,6 +6,17 @@ include:
   - mongo.yaml
 
 services:
+  nginx:
+    image: nginx:1.25
+    container_name: nginx_dev
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/site.conf:/etc/nginx/conf.d/default.conf
+      - ../logs/nginx/:/var/log/nginx/
+    restart: unless-stopped
+    ports:
+      - "80:80"
+
   jaeger:
     image: jaegertracing/all-in-one:latest
     container_name: jaeger
@@ -89,7 +100,75 @@ services:
     ports:
       - "8080:8080"
 
+  elastic-logs:
+    image: elasticsearch:8.10.2
+    container_name: elastic_logs_dev
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+      - cluster.routing.allocation.enable=all
+      - logger.level=ERROR
+    ports:
+      - "9201:9200"
+    volumes:
+      - elastic_logs_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: curl -s http://elastic-logs:9200 > /dev/null || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.10.2
+    container_name: logstash_dev
+    depends_on:
+      elastic-logs:
+        condition: service_healthy
+    healthcheck:
+      test: curl -s http://logstash:9600 > /dev/null || exit 1
+    environment:
+      XPACK_MONITORING_ENABLED: "false"
+      ES_HOST: "elastic-logs:9200"
+    ports:
+      - "5044:5044/udp"
+    volumes:
+      - ./elk/logstash.conf:/config/logstash.conf:ro
+      - ../logs/nginx/:/var/log/nginx/:ro
+    command: logstash -f /config/logstash.conf
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.10.2
+    container_name: kibana_dev
+    ports:
+      - "5601:5601"
+    depends_on:
+      elastic-logs:
+        condition: service_healthy
+    healthcheck:
+      test: curl -s http://kibana:5601 > /dev/null || exit 1
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.10.2
+    container_name: filebeat_dev
+    volumes:
+      - ./elk/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ../logs/apps:/usr/share/filebeat/logs/apps
+      - ../logs/nginx:/var/log/nginx:ro
+    depends_on:
+      elastic-logs:
+        condition: service_healthy
+      logstash:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    command: filebeat -e
+
 volumes:
   auth_db:
   films_db:
   elastic:
+  elastic_logs_data:
