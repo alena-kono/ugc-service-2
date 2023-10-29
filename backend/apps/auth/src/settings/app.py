@@ -7,6 +7,7 @@ from src.settings.db import PostgresSettings, RedisSettings
 from src.settings.jaeger import JaegerSettings
 from src.settings.logging import LoggingSettings
 from src.settings.rate_limiter import RateLimiterSettings
+from src.settings.sentry import SentrySettings
 from src.settings.service import ServiceSettings
 from src.settings.social import SocialSettings
 
@@ -22,6 +23,7 @@ class AppSettings(BaseAppSettings):
     social = SocialSettings()
     rate_limiter = RateLimiterSettings()
     jaeger = JaegerSettings()
+    sentry = SentrySettings()
 
 
 @lru_cache(maxsize=1)

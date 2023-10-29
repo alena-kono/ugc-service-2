@@ -2,6 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 from typing import Awaitable, Callable
 
+import sentry_sdk
 import structlog
 import uvicorn
 from fastapi import FastAPI, Request, status
@@ -114,6 +115,12 @@ add_pagination(app)
 
 if settings.jaeger.enabled:
     configure_tracer(app)
+
+if settings.sentry.enabled:
+    sentry_sdk.init(
+        dsn=settings.sentry.dsn,
+        enable_tracing=True,
+    )
 
 if __name__ == "__main__":
     uvicorn.run(
