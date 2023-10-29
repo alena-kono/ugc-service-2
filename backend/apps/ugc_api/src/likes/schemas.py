@@ -33,6 +33,7 @@ class LikeCreateResponseSchema(LikeBaseResponseSchema):
         cls, input_schema: LikeCreateRequestSchema, user_id: str
     ) -> Self:
         return cls(
+            _id=None,
             user_id=user_id,
             film_id=input_schema.film_id,
             timestamp=input_schema.timestamp,
@@ -50,6 +51,7 @@ class LikeUpdateResponseSchema(LikeBaseResponseSchema):
         cls, input_schema: LikeUpdateRequestSchema, user_id: str
     ) -> Self:
         return cls(
+            _id=None,
             user_id=user_id,
             film_id=input_schema.film_id,
             timestamp=input_schema.timestamp,

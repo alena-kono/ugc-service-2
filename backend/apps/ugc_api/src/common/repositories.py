@@ -111,7 +111,7 @@ class MongoRepository(IRepository):
     async def get_by_id(self, entity_id: str, collection: str) -> dict:
         cursor = await self.client[self.db_name][collection].find_one(
             {"_id": ObjectId(entity_id)}
-        )
+        )  # type: ignore
 
         if cursor is None:
             raise ValueError(f"there is not a document with an id {entity_id}")
@@ -126,7 +126,7 @@ class MongoRepository(IRepository):
         limit: int | None = None,
     ) -> list[dict]:
         cursor = self.client[self.db_name][collection].find(filters)
-        return await cursor.skip(skip).to_list(length=limit)
+        return await cursor.skip(skip).to_list(length=limit)  # type: ignore
 
     async def count(self, collection: str, filters: dict[str, str]) -> int:
         return await self.client[self.db_name][collection].count_documents(filters)
@@ -135,4 +135,4 @@ class MongoRepository(IRepository):
         self, collection: str, filters: list[dict], limit: int | None = None
     ) -> list[dict]:
         cursor = self.client[self.db_name][collection].aggregate(pipeline=filters)
-        return await cursor.to_list(length=limit)
+        return await cursor.to_list(length=limit)  # type: ignore

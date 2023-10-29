@@ -33,6 +33,7 @@ class ReviewCreateResponseSchema(ReviewBaseResponseSchema):
         cls, input_schema: ReviewCreateRequestSchema, user_id: str
     ) -> Self:
         return cls(
+            _id=None,
             user_id=user_id,
             film_id=input_schema.film_id,
             timestamp=input_schema.timestamp,
@@ -50,6 +51,7 @@ class ReviewUpdateResponseSchema(ReviewBaseResponseSchema):
         cls, input_schema: ReviewUpdateRequestSchema, user_id: str
     ) -> Self:
         return cls(
+            _id=None,
             user_id=user_id,
             film_id=input_schema.film_id,
             timestamp=input_schema.timestamp,
