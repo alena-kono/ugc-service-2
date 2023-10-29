@@ -1,28 +1,33 @@
-import logging
 from contextlib import asynccontextmanager
+from logging.config import dictConfig
 from typing import Awaitable, Callable
 
 import uvicorn
+from aiokafka import AIOKafkaProducer
 from fastapi import FastAPI, Request, status
 from fastapi.responses import ORJSONResponse, Response
 from fastapi_limiter import FastAPILimiter
+from fastapi_pagination import add_pagination
+from motor.motor_asyncio import AsyncIOMotorClient
 from opentelemetry import trace
 from redis import asyncio as aioredis
+from starlette.middleware.sessions import SessionMiddleware
+
+from src.common import databases
+from src.film_progress.api.v1.routers import router as film_progress_router
+from src.likes.api.v1.routers import router as likes_router
+from src.reviews.api.v1.routers import router as reviews_router
 from src.settings.app import get_app_settings
 from src.tracer.config import configure_tracer
-from src.ugc import database
-from src.ugc.api.v1.routers import router
-from starlette.middleware.sessions import SessionMiddleware
-from aiokafka import AIOKafkaProducer
 
 settings = get_app_settings()
-logging.config.dictConfig(settings.logging.config)
+dictConfig(settings.logging.config)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    database.redis = aioredis.from_url(settings.redis.dsn, encoding="utf-8")
-    database.producer = AIOKafkaProducer(
+    databases.redis = aioredis.from_url(settings.redis.dsn, encoding="utf-8")
+    databases.producer = AIOKafkaProducer(
         bootstrap_servers=settings.kafka.dsn,
         compression_type="gzip",
         enable_idempotence=True,
@@ -31,14 +36,16 @@ async def lifespan(app: FastAPI):
         request_timeout_ms=10000,
         retry_backoff_ms=1000,
     )
+    databases.mongodb = AsyncIOMotorClient(settings.mongo.dsn)
 
-    await database.producer.start()
-    await FastAPILimiter.init(database.redis)
+    await databases.producer.start()
+    await FastAPILimiter.init(databases.redis)
 
     yield
 
-    await database.redis.close()
-    await database.producer.stop()
+    await databases.mongodb.close()
+    await databases.redis.close()
+    await databases.producer.stop()
 
 
 app = FastAPI(
@@ -84,12 +91,16 @@ async def setup_request_id_for_jaeger(
     return await call_next(request)
 
 
-app.include_router(router, prefix="/api/v1/ugc_event", tags=["ugc"])
+app.include_router(film_progress_router, prefix="/api/v1", tags=["film_progress"])
+app.include_router(likes_router, prefix="/api/v1", tags=["likes"])
+app.include_router(reviews_router, prefix="/api/v1", tags=["reviews"])
 
 app.add_middleware(SessionMiddleware, secret_key=settings.auth.secret_key)
 
 if settings.jaeger.enabled:
     configure_tracer(app)
+
+add_pagination(app)
 
 if __name__ == "__main__":
     uvicorn.run(

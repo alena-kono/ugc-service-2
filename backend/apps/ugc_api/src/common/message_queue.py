@@ -1,7 +1,12 @@
-from abc import ABC, abstractmethod
 import asyncio
+from abc import ABC, abstractmethod
+
 from aiokafka import AIOKafkaProducer
 from fastapi import HTTPException
+
+
+def build_key(film_id: str, user_id: str) -> str:
+    return f"{user_id}{film_id}"
 
 
 class IMessageQueue(ABC):
@@ -20,7 +25,7 @@ class IMessageQueue(ABC):
 class KafkaMessageQueue(IMessageQueue):
     """Redis implementation."""
 
-    TIMEOUT_SECONDS = 60
+    TIMEOUT_SECONDS = 10
 
     def __init__(self, kafka_producer: AIOKafkaProducer):
         self.producer = kafka_producer

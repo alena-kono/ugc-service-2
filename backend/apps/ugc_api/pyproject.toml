@@ -29,6 +29,8 @@ authlib = "^1.2.1"
 itsdangerous = "^2.1.2"
 fastapi-limiter = "^0.1.5"
 aiokafka = "^0.8.1"
+motor = "^3.3.1"
+fastapi-pagination = "^0.12.11"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.2"
