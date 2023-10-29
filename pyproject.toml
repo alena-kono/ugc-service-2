@@ -5,7 +5,6 @@ line-length = 88
 files = "backend/"
 ignore_missing_imports = "True"
 strict_optional = "True"
-plugins = ["pydantic.mypy"]
 
 [tool.bandit]
 exclude_dirs = ["tests"]

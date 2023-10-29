@@ -1,5 +1,5 @@
-import logging
 from contextlib import asynccontextmanager
+from logging.config import dictConfig
 from typing import Awaitable, Callable
 
 import uvicorn
@@ -21,7 +21,7 @@ from src.settings.app import get_app_settings
 from src.tracer.config import configure_tracer
 
 settings = get_app_settings()
-logging.config.dictConfig(settings.logging.config)
+dictConfig(settings.logging.config)
 
 
 @asynccontextmanager

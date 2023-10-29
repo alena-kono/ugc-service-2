@@ -76,7 +76,6 @@ class FilmProgressService(IFilmProgressService):
         )
         return FilmProgressCreateResponseSchema(**stored_instance)
 
-    # TODO: optimize request to the database to read with offset and limit
     async def get_unfinished_films(
         self,
         pagination_params: Params,

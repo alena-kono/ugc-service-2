@@ -64,8 +64,7 @@ async def get_total_likes(
     return await service.get_total_likes(film_id=film_id)
 
 
-# TODO: figure out how to work with aggregate in mongodb
-# ! does not work yet
+
 @router.get(
     path="/average-rank",
     response_model=schemas.AverageRankResponseSchema,

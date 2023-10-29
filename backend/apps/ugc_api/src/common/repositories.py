@@ -18,7 +18,7 @@ class IRepository(ABC):
 
     @abstractmethod
     async def update(
-        self, filters: dict[str:str], data: dict, collection: str, upsert: bool = True
+        self, filters: dict[str, str], data: dict, collection: str, upsert: bool = True
     ) -> None:
         """update a record in the repository
 
@@ -46,7 +46,7 @@ class IRepository(ABC):
     async def get_list(
         self,
         collection: str,
-        filters: dict[str:str],
+        filters: dict[str, str],
         skip: int = 0,
         limit: int | None = None,
     ) -> list[dict]:
@@ -62,7 +62,7 @@ class IRepository(ABC):
         """
 
     @abstractmethod
-    async def count(self, collection: str, filters: dict[str:str]) -> int:
+    async def count(self, collection: str, filters: dict[str, str]) -> int:
         """count records in the repository
 
         Args:
@@ -75,7 +75,7 @@ class IRepository(ABC):
 
     @abstractmethod
     async def aggregate(
-        self, collection: str, filters: dict[str:str], limit: int | None = None
+        self, collection: str, filters: list[dict], limit: int | None = None
     ) -> list[dict]:
         """aggregate records in the repository
 
@@ -102,7 +102,7 @@ class MongoRepository(IRepository):
         return cursor.inserted_id
 
     async def update(
-        self, filters: dict[str:str], data: dict, collection: str, upsert: bool = True
+        self, filters: dict[str, str], data: dict, collection: str, upsert: bool = True
     ) -> None:
         await self.client[self.db_name][collection].update_one(
             filters, {"$set": data}, upsert=upsert
@@ -121,18 +121,18 @@ class MongoRepository(IRepository):
     async def get_list(
         self,
         collection: str,
-        filters: dict[str:str],
+        filters: dict[str, str],
         skip: int = 0,
         limit: int | None = None,
     ) -> list[dict]:
         cursor = self.client[self.db_name][collection].find(filters)
         return await cursor.skip(skip).to_list(length=limit)
 
-    async def count(self, collection: str, filters: dict[str:str]) -> int:
+    async def count(self, collection: str, filters: dict[str, str]) -> int:
         return await self.client[self.db_name][collection].count_documents(filters)
 
     async def aggregate(
-        self, collection: str, filters: dict[str:str], limit: int | None = None
+        self, collection: str, filters: list[dict], limit: int | None = None
     ) -> list[dict]:
         cursor = self.client[self.db_name][collection].aggregate(pipeline=filters)
         return await cursor.to_list(length=limit)

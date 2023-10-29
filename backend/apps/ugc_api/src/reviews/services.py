@@ -61,7 +61,11 @@ class IReviewService(ABC):
         """
 
     @abstractmethod
-    async def get_films_reviews(self, film_id: str) -> Page[ReviewResponseSchema]:
+    async def get_films_reviews(
+        self,
+        film_id: str,
+        pagination_params: Params,
+    ) -> Page[ReviewResponseSchema]:
         """Method handle event from the client and send it to the queue.
 
         Args:

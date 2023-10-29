@@ -106,7 +106,7 @@ class LikeService(ILikeService):
         return TotalLikesResponseSchema(total_likes=total_likes, film_id=film_id)
 
     async def get_average_rank(self, film_id: str) -> AverageRankResponseSchema:
-        pipeline = [
+        pipeline: list[dict] = [
             {"$match": {"film_id": film_id}},
             {"$group": {"_id": "$film_id", "average_rank": {"$avg": "$rank"}}},
         ]
