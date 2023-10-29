@@ -27,3 +27,8 @@ jobs:
         run: |
           poetry install --with dev
         working-directory: ./backend/apps/ugc_api
+
+      - name: Run mypy static check
+        run: |
+          poetry run mypy
+        working-directory: ./backend/apps/ugc_api
