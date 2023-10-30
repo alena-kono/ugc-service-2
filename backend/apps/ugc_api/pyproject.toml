@@ -62,3 +62,6 @@ bandit = "^1.7.5"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.flake8]
+ignore = ["E501", "A003", "VNE003", "B008"]

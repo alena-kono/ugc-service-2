@@ -28,6 +28,11 @@ jobs:
           poetry install --with dev
         working-directory: ./backend/apps/ugc_api
 
+      - name: Run flake static analyzer
+        run:
+          poetry run flake8 src/ tests/
+        working-directory: ./backend/apps/ugc_api
+
       - name: Run mypy static check
         run: |
           poetry run mypy
