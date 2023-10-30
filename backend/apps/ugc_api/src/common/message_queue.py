@@ -1,6 +1,7 @@
 import asyncio
 from abc import ABC, abstractmethod
 
+from async_timeout import timeout
 from aiokafka import AIOKafkaProducer
 from fastapi import HTTPException
 
@@ -32,7 +33,7 @@ class KafkaMessageQueue(IMessageQueue):
 
     async def push(self, topic: str, message: bytes, key: bytes | None = None) -> None:
         try:
-            async with asyncio.timeout(self.TIMEOUT_SECONDS):
+            async with timeout(self.TIMEOUT_SECONDS):
                 await self.producer.send(topic, message, key=key)
         except asyncio.TimeoutError as e:
             raise HTTPException(status_code=500, detail="Kafka is not available") from e
