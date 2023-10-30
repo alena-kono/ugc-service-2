@@ -1,4 +1,4 @@
-from typing import Self
+from typing_extensions import Self
 
 from src.auth.jwt import schemas as jwt_schemas
 from src.auth.jwt.service import create_tokens

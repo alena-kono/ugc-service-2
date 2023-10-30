@@ -51,3 +51,18 @@ jobs:
         run: |
           poetry run pytest tests
         working-directory: ./backend/apps/ugc_api
+
+      - name: Notify to telegram
+        if: cancelled() == false
+        uses: appleboy/telegram-action@master
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            The ugc CI was completed successfully 
+            Event: *${{ github.event_name }}*
+            Ref: *${{ github.ref }}*
+            Repository: *${{ github.repository }}*
+            Owner: *${{ github.repository_owner }}*
