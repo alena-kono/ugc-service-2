@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 from enum import StrEnum
-from typing import Self
+from typing_extensions import Self
 
 from pydantic import Field
 from src.common import schemas as common_schemas

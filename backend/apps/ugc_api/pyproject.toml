@@ -9,7 +9,7 @@ readme = "README.md"
 create-superuser = "src.cli.main:main"
 
 [tool.poetry.dependencies]
-python = "~3.11"
+python = "^3.10"
 redis = "^4.6.0"
 fastapi = "^0.99.0"
 pydantic = { version = "~1.10", extras = ["dotenv"] }
