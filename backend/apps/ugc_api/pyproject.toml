@@ -17,6 +17,7 @@ orjson = "^3.9.1"
 uvloop = "^0.17.0"
 uvicorn = "^0.22.0"
 gunicorn = "^20.1.0"
+structlog = "~23.2"
 typer = { extras = ["all"], version = "^0.9.0" }
 passlib = { extras = ["bcrypt"], version = "^1.7.4" }
 python-jose = { extras = ["cryptography"], version = "^3.3.0" }

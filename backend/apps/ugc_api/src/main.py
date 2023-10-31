@@ -1,7 +1,8 @@
+import logging
 from contextlib import asynccontextmanager
-from logging.config import dictConfig
 from typing import Awaitable, Callable
 
+import structlog
 import uvicorn
 from aiokafka import AIOKafkaProducer
 from fastapi import FastAPI, Request, status
@@ -11,17 +12,21 @@ from fastapi_pagination import add_pagination
 from motor.motor_asyncio import AsyncIOMotorClient
 from opentelemetry import trace
 from redis import asyncio as aioredis
-from starlette.middleware.sessions import SessionMiddleware
-
 from src.common import databases
 from src.film_progress.api.v1.routers import router as film_progress_router
 from src.likes.api.v1.routers import router as likes_router
 from src.reviews.api.v1.routers import router as reviews_router
 from src.settings.app import get_app_settings
+from src.settings.logging import configure_logger
 from src.tracer.config import configure_tracer
+from starlette.middleware.sessions import SessionMiddleware
 
 settings = get_app_settings()
-dictConfig(settings.logging.config)
+
+logging.config.dictConfig(settings.logging.config)
+configure_logger(enable_async_logger=False)
+
+logger = structlog.get_logger()
 
 
 @asynccontextmanager
@@ -61,6 +66,7 @@ app = FastAPI(
 
 @app.get("/ping")
 def pong() -> dict[str, str]:
+    logger.info("pong")
     return {"ping": "pong!"}
 
 
@@ -76,6 +82,22 @@ async def check_request_id(
                 content={"detail": "X-Request-Id is required"},
             )
     return await call_next(request)
+
+
+@app.middleware("http")
+async def logging_middleware(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
+    structlog.contextvars.clear_contextvars()
+
+    structlog.contextvars.bind_contextvars(
+        request_id=request.headers.get("X-Request-Id"),
+        service_name=settings.service.name,
+    )
+
+    response: Response = await call_next(request)
+
+    return response
 
 
 @app.middleware("http")
@@ -107,6 +129,5 @@ if __name__ == "__main__":
         "src.main:app",
         host=settings.service.host,
         port=settings.service.port,
-        log_config=settings.logging.config,
         reload=settings.service.debug,
     )
