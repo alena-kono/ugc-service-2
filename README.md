@@ -1,4 +1,4 @@
-a# UGC Service (Sprint 9)
+# UGC Service (Sprint 9)
 
 **[Link to the project to be reviewed](https://github.com/alena-kono/ugc-service-2)**
 
