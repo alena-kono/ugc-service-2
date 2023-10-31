@@ -2,6 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 from typing import Awaitable, Callable
 
+import sentry_sdk
 import structlog
 import uvicorn
 from aiokafka import AIOKafkaProducer
@@ -121,6 +122,12 @@ app.add_middleware(SessionMiddleware, secret_key=settings.auth.secret_key)
 
 if settings.jaeger.enabled:
     configure_tracer(app)
+
+if settings.sentry.enabled:
+    sentry_sdk.init(
+        dsn=settings.sentry.dsn,
+        enable_tracing=True,
+    )
 
 add_pagination(app)
 

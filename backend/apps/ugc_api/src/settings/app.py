@@ -8,6 +8,7 @@ from src.settings.logging import LoggingSettings
 from src.settings.mongo import MongoSettings
 from src.settings.rate_limiter import RateLimiterSettings
 from src.settings.redis import RedisSettings
+from src.settings.sentry import SentrySettings
 from src.settings.service import ServiceSettings
 
 
@@ -20,6 +21,7 @@ class AppSettings(BaseAppSettings):
     jaeger = JaegerSettings()  # type: ignore
     kafka = KafkaSettings()  # type: ignore
     mongo = MongoSettings()  # type: ignore
+    sentry = SentrySettings()  # type: ignore
 
 
 @lru_cache(maxsize=1)
