@@ -3,23 +3,23 @@ from functools import lru_cache
 from src.settings.auth import AuthSettings
 from src.settings.base import BaseAppSettings
 from src.settings.jaeger import JaegerSettings
+from src.settings.kafka import KafkaSettings
 from src.settings.logging import LoggingSettings
+from src.settings.mongo import MongoSettings
 from src.settings.rate_limiter import RateLimiterSettings
 from src.settings.redis import RedisSettings
 from src.settings.service import ServiceSettings
-from src.settings.kafka import KafkaSettings
-from src.settings.mongo import MongoSettings
 
 
 class AppSettings(BaseAppSettings):
-    logging = LoggingSettings()
-    redis = RedisSettings()
-    service = ServiceSettings()
-    auth = AuthSettings()
-    rate_limiter = RateLimiterSettings()
-    jaeger = JaegerSettings()
-    kafka = KafkaSettings()
-    mongo = MongoSettings()
+    logging = LoggingSettings()  # type: ignore
+    redis = RedisSettings()  # type: ignore
+    service = ServiceSettings()  # type: ignore
+    auth = AuthSettings()  # type: ignore
+    rate_limiter = RateLimiterSettings()  # type: ignore
+    jaeger = JaegerSettings()  # type: ignore
+    kafka = KafkaSettings()  # type: ignore
+    mongo = MongoSettings()  # type: ignore
 
 
 @lru_cache(maxsize=1)

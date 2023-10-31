@@ -43,7 +43,7 @@ async def get_unfinished_films(
     service: FilmServiceType,
     user: UserToken,
     pagination_params: Params = Depends(),
-) -> Page[schemas.FilmProgressCreateResponseSchema]:
+) -> Page[schemas.FilmProgressResponseSchema]:
     return await service.get_unfinished_films(
         user_id=user.user.id, pagination_params=pagination_params
     )

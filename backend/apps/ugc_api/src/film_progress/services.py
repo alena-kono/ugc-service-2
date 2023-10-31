@@ -71,7 +71,7 @@ class FilmProgressService(IFilmProgressService):
         )
 
         stored_instance = await self.repository.get_by_id(
-            entity_id,
+            str(entity_id),
             collection=self.FILM_PROGRESS_NAMESPACE,
         )
         return FilmProgressCreateResponseSchema(**stored_instance)

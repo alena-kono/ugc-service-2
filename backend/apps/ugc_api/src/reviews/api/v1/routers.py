@@ -44,7 +44,7 @@ async def update_review(
     service: ReviewServiceType,
     user: UserToken,
     request_body: schemas.ReviewUpdateRequestSchema,
-) -> schemas.ReviewCreateResponseSchema:
+) -> schemas.ReviewUpdateResponseSchema:
     return await service.update_review_record(
         review_id=review_id,
         update_request_body=request_body,
@@ -64,7 +64,7 @@ async def get_user_review(
     _: RateLimiterType,
     service: ReviewServiceType,
     user: UserToken,
-) -> schemas.ReviewCreateResponseSchema:
+) -> schemas.ReviewResponseSchema:
     return await service.get_user_review(
         film_id=film_id,
         user_id=user.user.id,

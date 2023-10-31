@@ -9,7 +9,7 @@ readme = "README.md"
 create-superuser = "src.cli.main:main"
 
 [tool.poetry.dependencies]
-python = "~3.11"
+python = "^3.10"
 redis = "^4.6.0"
 fastapi = "^0.99.0"
 pydantic = { version = "~1.10", extras = ["dotenv"] }
@@ -31,6 +31,8 @@ fastapi-limiter = "^0.1.5"
 aiokafka = "^0.8.1"
 motor = "^3.3.1"
 fastapi-pagination = "^0.12.11"
+types-redis = "^4.6.0.8"
+async-timeout = "^4.0.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.2"
@@ -61,3 +63,6 @@ bandit = "^1.7.5"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.flake8]
+ignore = ["E501", "A003", "VNE003", "B008"]

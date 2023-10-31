@@ -1,4 +1,4 @@
-from typing import Self
+from typing_extensions import Self
 
 from src.common.schemas import BaseMongoSchema, BaseSchema
 
@@ -26,6 +26,7 @@ class FilmProgressCreateResponseSchema(FilmProgressBaseResponseSchema):
         cls, input_schema: FilmProgressCreateRequestSchema, user_id: str
     ) -> Self:
         return cls(
+            _id=None,
             user_id=user_id,
             film_id=input_schema.film_id,
             timestamp=input_schema.timestamp,

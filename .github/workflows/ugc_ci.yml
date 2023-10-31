@@ -1,0 +1,68 @@
+name: ugc api ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Install and configure poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.6.1
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Install dependencies
+        run: |
+          poetry install --no-root --with dev
+        working-directory: ./backend/apps/ugc_api
+
+      - name: Run flake static analyzer
+        run:
+          poetry run flake8 src/ tests/
+        working-directory: ./backend/apps/ugc_api
+
+      - name: Run mypy static check
+        run: |
+          poetry run mypy
+        working-directory: ./backend/apps/ugc_api
+
+      - name: Run tests
+        run: |
+          poetry run pytest tests
+        working-directory: ./backend/apps/ugc_api
+
+      - name: Notify to telegram
+        if: cancelled() == false
+        uses: appleboy/telegram-action@master
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            The ugc CI for python ${{ matrix.python-version }} was completed successfully 
+            Event: *${{ github.event_name }}*
+            Ref: *${{ github.ref }}*
+            Repository: *${{ github.repository }}*
+            Owner: *${{ github.repository_owner }}*

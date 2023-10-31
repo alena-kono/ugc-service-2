@@ -19,4 +19,6 @@ class BaseMongoSchema(BaseSchema):
     @validator("id", pre=True, always=True)
     @classmethod
     def convert_to_str(cls, _id: ObjectId) -> str | None:
-        return _id and str(_id)
+        if _id:
+            return str(_id)
+        return None

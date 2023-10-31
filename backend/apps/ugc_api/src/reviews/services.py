@@ -104,7 +104,7 @@ class ReviewService(IReviewService):
         )
 
         stored_instance = await self.repository.get_by_id(
-            entity_id=inserted_id,
+            entity_id=str(inserted_id),
             collection=self.REVIEWS_NAMESPACE,
         )
         return ReviewCreateResponseSchema(**stored_instance)
@@ -126,7 +126,7 @@ class ReviewService(IReviewService):
                 key=key.encode(),
             ),
             self.repository.update(
-                filters={"_id": ObjectId(review_id)},
+                filters={"_id": str(ObjectId(review_id))},
                 data=review_record.dict(exclude_none=True),
                 collection=self.REVIEWS_NAMESPACE,
                 upsert=False,
