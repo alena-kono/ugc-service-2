@@ -17,6 +17,7 @@ orjson = "^3.9.1"
 uvloop = "^0.17.0"
 uvicorn = "^0.22.0"
 gunicorn = "^20.1.0"
+structlog = "~23.2"
 typer = { extras = ["all"], version = "^0.9.0" }
 passlib = { extras = ["bcrypt"], version = "^1.7.4" }
 python-jose = { extras = ["cryptography"], version = "^3.3.0" }
@@ -25,6 +26,7 @@ opentelemetry-api = "^1.20.0"
 opentelemetry-sdk = "^1.20.0"
 opentelemetry-instrumentation-fastapi = "^0.41b0"
 opentelemetry-exporter-jaeger = "^1.20.0"
+sentry-sdk = { extras = ["fastapi"], version = "~1.32" }
 authlib = "^1.2.1"
 itsdangerous = "^2.1.2"
 fastapi-limiter = "^0.1.5"

@@ -1,11 +1,19 @@
 import datetime
-import logging
 import typing as tp
 from enum import Enum
 
 import pydantic
 import structlog
 from src.settings.base import BaseAppSettings
+
+LoggerProcessors = (
+    tp.Iterable[
+        tp.Callable[
+            [tp.Any, str, tp.MutableMapping[str, tp.Any]],
+            tp.Mapping[str, tp.Any] | str | bytes | bytearray | tuple[tp.Any, ...],
+        ]
+    ] | None
+)
 
 
 class LoggerLevelType(str, Enum):
@@ -31,7 +39,7 @@ class LoggingSettings(BaseAppSettings):
     def config(self) -> dict[str, tp.Any]:
         return {
             "version": 1,
-            "disable_existing_loggers": True,
+            "disable_existing_loggers": False,
             "formatters": {
                 "json_formatter": {
                     "()": structlog.stdlib.ProcessorFormatter,
@@ -63,7 +71,11 @@ class LoggingSettings(BaseAppSettings):
                 "": {
                     "handlers": ["console", "json_file"],
                     "level": self.level,
-                }
+                },
+                "uvicorn.access": {
+                    "handlers": ["console"],
+                    "level": self.level,
+                },
             },
         }
 
@@ -80,7 +92,7 @@ def configure_logger(enable_async_logger: bool = False) -> None:
     Note:
         Async logger should be called within async context.
     """
-    shared_processors = [
+    shared_processors: LoggerProcessors = [
         structlog.contextvars.merge_contextvars,
         structlog.stdlib.filter_by_level,
         structlog.processors.TimeStamper(fmt="iso"),
@@ -94,9 +106,11 @@ def configure_logger(enable_async_logger: bool = False) -> None:
         structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
     ]
 
-    logger_wrapper = structlog.stdlib.BoundLogger
-    if enable_async_logger:
-        logger_wrapper = structlog.stdlib.AsyncBoundLogger
+    logger_wrapper = (
+        structlog.stdlib.AsyncBoundLogger
+        if enable_async_logger
+        else structlog.stdlib.BoundLogger
+    )
 
     structlog.configure(
         processors=shared_processors,
@@ -104,12 +118,3 @@ def configure_logger(enable_async_logger: bool = False) -> None:
         wrapper_class=logger_wrapper,
         cache_logger_on_first_use=True,
     )
-
-    _clear_log_handlers(["uvicorn.access", "uvicorn.error"])
-
-
-def _clear_log_handlers(loggers_names: list[str]) -> None:
-    """Clear the log handlers for loggers, and enable propagation."""
-    for _log in loggers_names:
-        logging.getLogger(_log).handlers.clear()
-        logging.getLogger(_log).propagate = True
