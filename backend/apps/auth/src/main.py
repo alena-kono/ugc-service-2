@@ -127,6 +127,5 @@ if __name__ == "__main__":
         "src.main:app",
         host=settings.service.host,
         port=settings.service.port,
-        log_config=settings.logging.config,
         reload=settings.service.debug,
     )
