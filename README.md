@@ -150,3 +150,8 @@ python -m src.main
 ``` bash
 pytest .
 ```
+
+## Access logs at Kibana
+0. Go to [Kibana](http://localhost:5601/app/kibana#/discover?_g=())
+1. Create data view by setting up index pattern.
+2. Logs will be uploaded automatically.

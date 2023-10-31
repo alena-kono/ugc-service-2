@@ -2,6 +2,8 @@ import logging
 from contextlib import asynccontextmanager
 from typing import Awaitable, Callable
 
+import sentry_sdk
+import structlog
 import uvicorn
 from fastapi import FastAPI, Request, status
 from fastapi.responses import ORJSONResponse, Response
@@ -15,13 +17,18 @@ from src.auth.api.v1 import router as auth_router
 from src.common import database
 from src.permissions.api.v1 import router as permissions_router
 from src.settings.app import get_app_settings
+from src.settings.logging import configure_logger
 from src.social.api.v1 import router as social_router
 from src.tracer.config import configure_tracer
 from src.users.api.v1 import router as users_router
 from starlette.middleware.sessions import SessionMiddleware
 
 settings = get_app_settings()
+
 logging.config.dictConfig(settings.logging.config)
+configure_logger(enable_async_logger=False)
+
+logger = structlog.get_logger()
 
 
 @asynccontextmanager
@@ -49,6 +56,7 @@ app = FastAPI(
 
 @app.get("/ping")
 def pong() -> dict[str, str]:
+    logger.info("pong")
     return {"ping": "pong!"}
 
 
@@ -64,6 +72,22 @@ async def check_request_id(
                 content={"detail": "X-Request-Id is required"},
             )
     return await call_next(request)
+
+
+@app.middleware("http")
+async def logging_middleware(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
+    structlog.contextvars.clear_contextvars()
+
+    structlog.contextvars.bind_contextvars(
+        request_id=request.headers.get("X-Request-Id"),
+        service_name=settings.service.name,
+    )
+
+    response: Response = await call_next(request)
+
+    return response
 
 
 @app.middleware("http")
@@ -91,6 +115,12 @@ add_pagination(app)
 
 if settings.jaeger.enabled:
     configure_tracer(app)
+
+if settings.sentry.enabled:
+    sentry_sdk.init(
+        dsn=settings.sentry.dsn,
+        enable_tracing=True,
+    )
 
 if __name__ == "__main__":
     uvicorn.run(
