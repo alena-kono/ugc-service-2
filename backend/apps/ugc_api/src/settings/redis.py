@@ -14,6 +14,6 @@ class RedisSettings(BaseAppSettings):
             pydantic.RedisDsn.build(
                 scheme="redis",
                 host=self.host,
-                port=self.port,
+                port=str(self.port),
             )
         )
