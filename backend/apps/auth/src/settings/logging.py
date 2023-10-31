@@ -32,7 +32,7 @@ class LoggingSettings(BaseAppSettings):
         env="LOGGING_LEVEL", default=LoggerLevelType.DEBUG
     )
     file_path_json: str = pydantic.Field(
-        env="LOGGING_FILE_PATH_JSON", default="../../../logs/apps/auth.log"
+        env="LOGGING_FILE_PATH_JSON", default="../../../logs/apps/auth/auth.log"
     )
 
     @property
