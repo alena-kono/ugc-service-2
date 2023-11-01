@@ -1,6 +1,5 @@
-from src.settings.base import BaseAppSettings
-
 import pydantic
+from src.settings.base import BaseAppSettings
 
 
 class ETLSettings(BaseAppSettings):

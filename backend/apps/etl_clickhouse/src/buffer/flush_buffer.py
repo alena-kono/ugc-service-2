@@ -1,12 +1,10 @@
 import asyncio
 import logging
 import sys
-
 from abc import ABC, abstractmethod
 from collections.abc import AsyncGenerator, Callable
 from contextlib import asynccontextmanager
 from typing import Any, Self
-
 
 logger = logging.getLogger()
 

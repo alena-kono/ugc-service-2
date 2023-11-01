@@ -1,12 +1,11 @@
 from functools import lru_cache
 
+import pydantic
 from src.settings.base import BaseAppSettings
 from src.settings.clickhouse import ClickhouseSettings
 from src.settings.etl import ETLSettings
 from src.settings.kafka import KafkaSettings
 from src.settings.logging import LoggingSettings
-
-import pydantic
 
 
 class AppSettings(BaseAppSettings):

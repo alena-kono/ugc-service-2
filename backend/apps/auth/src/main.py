@@ -1,4 +1,3 @@
-import logging
 from contextlib import asynccontextmanager
 from typing import Awaitable, Callable
 
@@ -25,7 +24,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 settings = get_app_settings()
 
-logging.config.dictConfig(settings.logging.config)
+# logging.config.dictConfig(settings.logging.config)
 configure_logger(enable_async_logger=False)
 
 logger = structlog.get_logger()

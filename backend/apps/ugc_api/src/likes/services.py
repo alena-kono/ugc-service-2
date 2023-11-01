@@ -95,7 +95,7 @@ class LikeService(ILikeService):
             limit=1,
             collection=self.LIKES_NAMESPACE,
         )
-        return LikeCreateResponseSchema(**stored_instance[0])
+        return LikeCreateResponseSchema(**stored_instance)
 
     async def get_total_likes(self, film_id: str) -> TotalLikesResponseSchema:
         total_likes = await self.repository.count(

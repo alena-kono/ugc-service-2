@@ -12,7 +12,8 @@ LoggerProcessors = (
             [tp.Any, str, tp.MutableMapping[str, tp.Any]],
             tp.Mapping[str, tp.Any] | str | bytes | bytearray | tuple[tp.Any, ...],
         ]
-    ] | None
+    ]
+    | None  # noqa: W503
 )
 
 

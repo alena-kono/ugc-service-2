@@ -2,7 +2,6 @@ from collections.abc import Callable
 from typing import Any
 
 import orjson
-
 from pydantic import BaseModel
 
 
@@ -11,7 +10,6 @@ def orjson_dumps(value: dict[str, Any], *, default: Any) -> str:
 
 
 class AppBaseSchema(BaseModel):
- 
     class Config:
         orm_mode: bool = True
         json_loads: Callable = orjson.loads

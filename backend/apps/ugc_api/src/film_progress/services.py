@@ -2,7 +2,6 @@ import asyncio
 from abc import ABC, abstractmethod
 
 from fastapi_pagination import Page, Params
-
 from src.common.dependencies import MessageQueueType, RepositoryType
 from src.common.message_queue import IMessageQueue, build_key
 from src.common.repositories import IRepository

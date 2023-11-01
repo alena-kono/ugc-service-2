@@ -19,3 +19,4 @@ ignore = ["E501", "A003", "VNE003", "B008"]
 
 [tool.pytest.ini_options]
 filterwarnings = ["ignore::DeprecationWarning"]
+asyncio_mode = "auto"

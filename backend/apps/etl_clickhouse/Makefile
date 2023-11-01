@@ -1,5 +1,5 @@
 SHELL := /bin/bash
- 
+
 # .PHONY: all devenv devenv-down migrations migrate run-tests testenv testenv-down
 
 all:

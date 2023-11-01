@@ -1,6 +1,6 @@
-from redis.asyncio import Redis
 from aiokafka import AIOKafkaProducer
 from motor.core import AgnosticClient
+from redis.asyncio import Redis
 
 redis: None | Redis = None
 producer: AIOKafkaProducer | None = None

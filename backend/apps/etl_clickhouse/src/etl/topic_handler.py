@@ -1,29 +1,23 @@
 import logging
-
 from abc import ABC, abstractmethod
 from enum import StrEnum, unique
 
+from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
+from pydantic import BaseModel
 from src.etl.analytical_db import AnalyticalRepository
 from src.exceptions.exception import BatchInsertException
 from src.models.base import AppBaseSchema
 from src.models.view import ViewMessage
-
-from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
-from pydantic import BaseModel
-
 
 logger = logging.getLogger(__name__)
 
 
 @unique
 class Topic(StrEnum):
-
     VIEWS: str = "views"
 
 
-TOPIC_SCHEMAS_MAP: dict[str, type[AppBaseSchema]] = {
-    Topic.VIEWS: ViewMessage
-}
+TOPIC_SCHEMAS_MAP: dict[str, type[AppBaseSchema]] = {Topic.VIEWS: ViewMessage}
 
 
 class TopicMessage(BaseModel):
@@ -40,9 +34,13 @@ class ITopicHandler(ABC):
 
 
 class KafkaTopicHandler(ITopicHandler):
-
-    def __init__(self, schema: type[AppBaseSchema], consumer: AIOKafkaConsumer,
-                 producer: AIOKafkaProducer, dlq_topic: str) -> None:
+    def __init__(
+        self,
+        schema: type[AppBaseSchema],
+        consumer: AIOKafkaConsumer,
+        producer: AIOKafkaProducer,
+        dlq_topic: str,
+    ) -> None:
         super().__init__()
         # TODO: replace with avro schema
         self.schema = schema
@@ -60,7 +58,9 @@ class KafkaTopicHandler(ITopicHandler):
                 view = self.schema.parse_raw(message.value)
                 parsed_messages.append(view)
             except Exception as e:
-                logger.error(f"Couldn't parse message = {message}, err = {e}", exc_info=True)
+                logger.error(
+                    f"Couldn't parse message = {message}, err = {e}", exc_info=True
+                )
                 dlq_messages.append(message)
 
         return parsed_messages, dlq_messages
@@ -76,11 +76,13 @@ class KafkaTopicHandler(ITopicHandler):
                     topic=self.dlq_topic,
                     # Use the same key so we can guarantee the same order during reprocessing
                     key=dlq_message.key,
-                    value=dlq_message.value
+                    value=dlq_message.value,
                 )
             except Exception as e:
                 # Just ignore the error as we still can proceed even if we can't send a message to dlq
-                logger.error(f"Something went wrong, couldn't send message = {dlq_message.value!r} to dlq = {self.dlq_topic}, err = {e}")
+                logger.error(
+                    f"Something went wrong, couldn't send message = {dlq_message.value!r} to dlq = {self.dlq_topic}, err = {e}"
+                )
 
     async def handle_batch(self, messages: list[TopicMessage]) -> None:
         # Need to override the method so class can be instantiated and tested
@@ -88,10 +90,15 @@ class KafkaTopicHandler(ITopicHandler):
 
 
 class KafkaToDatabaseHandler(KafkaTopicHandler):
-
-    def __init__(self, schema: type[AppBaseSchema], consumer: AIOKafkaConsumer,
-                 producer: AIOKafkaProducer, dlq_topic: str,
-                 analytical_repository: AnalyticalRepository, db_table: str) -> None:
+    def __init__(
+        self,
+        schema: type[AppBaseSchema],
+        consumer: AIOKafkaConsumer,
+        producer: AIOKafkaProducer,
+        dlq_topic: str,
+        analytical_repository: AnalyticalRepository,
+        db_table: str,
+    ) -> None:
         super().__init__(schema, consumer, producer, dlq_topic)
         self.analytical_repository = analytical_repository
         self.db_table = db_table
@@ -106,21 +113,29 @@ class KafkaToDatabaseHandler(KafkaTopicHandler):
                 await self.analytical_repository.insert_batch(
                     table=self.db_table,
                     keys=models[0].dict().keys(),
-                    data=[model.dict() for model in models]
+                    data=[model.dict() for model in models],
                 )
             except BatchInsertException as e:
-                logger.error(f"Couldn't insert batch {self.schema}, n = {len(models)}, err = {e}")
+                logger.error(
+                    f"Couldn't insert batch {self.schema}, n = {len(models)}, err = {e}"
+                )
                 # if insert failed we need to reprocess all messages later
                 dlq_messages = messages
 
-        await self.send_to_dlq(dlq_messages)       
+        await self.send_to_dlq(dlq_messages)
 
         await self.consumer.commit()
 
 
-def get_topic_handler(*, topic: str, consumer: AIOKafkaConsumer, producer: AIOKafkaProducer,
-                      dlq_topic: str, repository: AnalyticalRepository, db_table: str) -> ITopicHandler:
-
+def get_topic_handler(
+    *,
+    topic: str,
+    consumer: AIOKafkaConsumer,
+    producer: AIOKafkaProducer,
+    dlq_topic: str,
+    repository: AnalyticalRepository,
+    db_table: str,
+) -> ITopicHandler:
     schema = TOPIC_SCHEMAS_MAP.get(topic, None)
 
     if not schema:
@@ -132,5 +147,5 @@ def get_topic_handler(*, topic: str, consumer: AIOKafkaConsumer, producer: AIOKa
         producer=producer,
         dlq_topic=dlq_topic,
         analytical_repository=repository,
-        db_table=db_table
+        db_table=db_table,
     )

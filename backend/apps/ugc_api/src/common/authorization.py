@@ -4,7 +4,6 @@ import time
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPBearer
 from jose import jwt
-
 from src.common.schemas import BaseSchema
 from src.settings.app import get_app_settings
 

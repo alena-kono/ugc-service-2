@@ -61,7 +61,7 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            The ugc CI for python ${{ matrix.python-version }} was completed successfully 
+            The ugc CI for python ${{ matrix.python-version }} was completed successfully
             Event: *${{ github.event_name }}*
             Ref: *${{ github.ref }}*
             Repository: *${{ github.repository }}*
