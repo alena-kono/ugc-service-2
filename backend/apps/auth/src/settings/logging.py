@@ -1,4 +1,5 @@
 import datetime
+import pathlib
 import typing as tp
 from enum import Enum
 
@@ -37,6 +38,7 @@ class LoggingSettings(BaseAppSettings):
 
     @property
     def config(self) -> dict[str, tp.Any]:
+        pathlib.Path(self.file_path_json).parent.mkdir(parents=True, exist_ok=True)
         return {
             "version": 1,
             "disable_existing_loggers": False,
