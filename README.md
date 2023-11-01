@@ -61,7 +61,7 @@ Find more information about the experiment [here](backend/research/mongo_vs_all/
 * Reads Number = 1000 times 
 * Average select time: 0.012428301582986023 sec
 
-## Aggregation test
+#### Aggregation test
 * query: `SELECT user_id, COUNT(*) as count FROM collection.test_collection GROUP BY user_id ORDER BY count DESC LIMIT 10` 
 * Reads Number = 10 times 
 * Average select time: 0.17657093749730848 sec
@@ -77,11 +77,42 @@ Find more information about the experiment [here](backend/research/mongo_vs_all/
 * Reads Number = 1000 times 
 * Average select time: 0.005184496374975424 sec
 
-## Aggregation test
+#### Aggregation test
 * query: [{"$group": {"_id": "$user_id", "count": {"$sum": 1}}}, {"$sort": {"count": -1}}, {"$limit": 10}]
 * Reads Number = 10 times 
 * Average aggregate time: 3.495923020900227 sec
 
+### Mongo vs Postgres 
+Mongo and Postgres were run as a single node 
+the data structure is the same as in the tests above 
+
+### Postgres
+#### Insert batch test:
+* 100_000 inserted rows
+* Insertion took 30.5753 seconds
+* average insertion time: 0.0003 seconds
+
+#### Read batch test
+* Reads Number = 1000 times 
+* Average select time: 0.011274614583002404 sec
+
+### Update test
+* Update Number = 1000 times 
+* Average update time: 0.0204745907089673 sec
+
+### Mongo
+#### Insert batch test:
+* 100_000 docs inserted
+* Insertion took 37.5226 seconds
+* average insertion time: 0.0004 seconds
+
+#### Read batch test
+* Reads Number = 100_000 times 
+* Average select time: 0.00039721483082976193 sec
+
+#### Update test
+* Update Number = 10_000 times 
+* Average update time: 0.0003978825124911964 sec
 
 ## SERVICE PORTS MAPPING FOR THE LOCAL DEVELOPMENT
 0. `movies_admin`: port 8000
