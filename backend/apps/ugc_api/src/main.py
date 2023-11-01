@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 from typing import Awaitable, Callable
 
@@ -12,6 +13,8 @@ from fastapi_pagination import add_pagination
 from motor.motor_asyncio import AsyncIOMotorClient
 from opentelemetry import trace
 from redis import asyncio as aioredis
+from starlette.middleware.sessions import SessionMiddleware
+
 from src.common import databases
 from src.film_progress.api.v1.routers import router as film_progress_router
 from src.likes.api.v1.routers import router as likes_router
@@ -19,11 +22,10 @@ from src.reviews.api.v1.routers import router as reviews_router
 from src.settings.app import get_app_settings
 from src.settings.logging import configure_logger
 from src.tracer.config import configure_tracer
-from starlette.middleware.sessions import SessionMiddleware
 
 settings = get_app_settings()
 
-# logging.config.dictConfig(settings.logging.config)
+logging.config.dictConfig(settings.logging.config)
 configure_logger(enable_async_logger=False)
 
 logger = structlog.get_logger()

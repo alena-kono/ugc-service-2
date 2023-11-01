@@ -4,6 +4,7 @@ from enum import Enum
 
 import pydantic
 import structlog
+
 from src.settings.base import BaseAppSettings
 
 LoggerProcessors = (

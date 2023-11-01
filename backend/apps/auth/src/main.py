@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 from typing import Awaitable, Callable
 
@@ -12,6 +13,8 @@ from fastapi_limiter import FastAPILimiter
 from fastapi_pagination import add_pagination
 from opentelemetry import trace
 from redis import asyncio as aioredis
+from starlette.middleware.sessions import SessionMiddleware
+
 from src.auth.api.v1 import router as auth_router
 from src.common import database
 from src.permissions.api.v1 import router as permissions_router
@@ -20,11 +23,10 @@ from src.settings.logging import configure_logger
 from src.social.api.v1 import router as social_router
 from src.tracer.config import configure_tracer
 from src.users.api.v1 import router as users_router
-from starlette.middleware.sessions import SessionMiddleware
 
 settings = get_app_settings()
 
-# logging.config.dictConfig(settings.logging.config)
+logging.config.dictConfig(settings.logging.config)
 configure_logger(enable_async_logger=False)
 
 logger = structlog.get_logger()
