@@ -13,6 +13,7 @@ ipykernel = "^6.25.2"
 ipython = "^8.16.1"
 clickhouse-driver = "^0.2.6"
 motor = "^3.3.1"
+psycopg2 = "^2.9.9"
 
 
 [build-system]
