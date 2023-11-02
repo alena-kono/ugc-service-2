@@ -42,9 +42,9 @@ jobs:
           poetry run flake8 src/ tests/
         working-directory: ./backend/apps/ugc_api
       
-      - name: Check compose version
-        run: |
-          docker-compose -v
+      # - name: Check compose version
+      #   run: |
+      #     docker compose -v
 
       - name: Run mypy static check
         run: |
@@ -53,7 +53,7 @@ jobs:
 
       - name: Run tests
         run: |
-          docker-compose -f docker-compose.test.yml run --service-ports --rm --build ugc_api_test
+          docker compose -f docker-compose.test.yml run --service-ports --rm --build ugc_api_test
         working-directory: ./backend/apps/ugc_api/tests
 
       - name: Notify to telegram
