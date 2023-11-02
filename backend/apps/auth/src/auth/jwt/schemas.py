@@ -1,11 +1,11 @@
 import uuid
 from datetime import datetime
 from enum import StrEnum
-from typing_extensions import Self
 
 from pydantic import Field
 from src.common import schemas as common_schemas
 from src.users import schemas as users_schemas
+from typing_extensions import Self
 
 
 class Status(StrEnum):

@@ -1,9 +1,9 @@
-from typing_extensions import Self
 from uuid import UUID
 
 import orjson
 from pydantic import BaseModel, Field, validator
 from src.common.models import AppBaseModel, orjson_dumps
+from typing_extensions import Self
 
 
 class BaseSchema(BaseModel):

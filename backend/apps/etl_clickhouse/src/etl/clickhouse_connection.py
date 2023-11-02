@@ -1,13 +1,10 @@
 import logging
-
 from contextlib import asynccontextmanager
-
-from src.settings.clickhouse import ClickhouseSettings
 
 from asynch import create_pool
 from asynch.connection import Connection
 from asynch.pool import Pool
-
+from src.settings.clickhouse import ClickhouseSettings
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +20,7 @@ async def create_connection_pool(clickhouse_settings: ClickhouseSettings) -> Poo
         port=clickhouse_settings.port,
         database=clickhouse_settings.database,
         user=clickhouse_settings.user,
-        password=clickhouse_settings.password
+        password=clickhouse_settings.password,
     ) as pool:
         yield pool
 

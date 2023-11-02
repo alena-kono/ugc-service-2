@@ -7,7 +7,6 @@ from src.etl.run import run_etl
 from src.settings.app import get_app_settings
 from src.utils.write_pid import write_pid
 
-
 settings = get_app_settings()
 logging.config.dictConfig(settings.logging.config)
 
@@ -25,8 +24,7 @@ def handle_uncaught_exception(exc_type, exc_value, exc_traceback):
 sys.excepthook = handle_uncaught_exception
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if settings.pidfile:
         write_pid(settings.pidfile)
     asyncio.run(run_etl(settings))
-

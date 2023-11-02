@@ -41,7 +41,7 @@ jobs:
         run:
           poetry run flake8 src/ tests/
         working-directory: ./backend/apps/ugc_api
-
+      
       - name: Run mypy static check
         run: |
           poetry run mypy
@@ -49,8 +49,8 @@ jobs:
 
       - name: Run tests
         run: |
-          poetry run pytest tests
-        working-directory: ./backend/apps/ugc_api
+          docker compose -f docker-compose.test.yml run --service-ports --rm --build ugc_api_test
+        working-directory: ./backend/apps/ugc_api/tests
 
       - name: Notify to telegram
         if: cancelled() == false
@@ -61,7 +61,7 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            The ugc CI for python ${{ matrix.python-version }} was completed successfully 
+            The ugc CI for python ${{ matrix.python-version }} was completed successfully
             Event: *${{ github.event_name }}*
             Ref: *${{ github.ref }}*
             Repository: *${{ github.repository }}*

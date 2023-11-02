@@ -2,7 +2,6 @@ import logging
 
 from fastapi import APIRouter, Depends
 from fastapi_pagination import Page, Params
-
 from src.common.dependencies import RateLimiterType, UserToken
 from src.film_progress import schemas
 from src.film_progress.dependencies import FilmServiceType

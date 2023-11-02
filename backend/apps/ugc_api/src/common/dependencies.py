@@ -4,7 +4,6 @@ from aiokafka import AIOKafkaProducer
 from fastapi import Depends
 from fastapi_limiter.depends import RateLimiter
 from motor.core import AgnosticClient
-
 from src.common.authorization import JWTBearer, JwtClaims
 from src.common.databases import get_kafka_producer, get_mongodb
 from src.common.message_queue import IMessageQueue, KafkaMessageQueue

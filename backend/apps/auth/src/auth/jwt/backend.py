@@ -1,9 +1,8 @@
-from typing_extensions import Self
-
 from src.auth.jwt import schemas as jwt_schemas
 from src.auth.jwt.service import create_tokens
 from src.auth.jwt.storage import JWTStorage
 from src.settings.app import get_app_settings
+from typing_extensions import Self
 
 settings = get_app_settings()
 
