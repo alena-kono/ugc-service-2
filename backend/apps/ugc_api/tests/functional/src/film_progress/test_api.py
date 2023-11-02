@@ -1,10 +1,15 @@
 from time import time
 from uuid import uuid4
+import pytest
 
 from httpx import AsyncClient
 from motor.core import AgnosticClient
 from src.common.authorization import JwtClaims
 from src.settings.app import get_app_settings
+
+
+pytestmark = pytest.mark.asyncio
+
 
 settings = get_app_settings()
 

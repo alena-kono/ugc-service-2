@@ -49,8 +49,8 @@ jobs:
 
       - name: Run tests
         run: |
-          poetry run pytest tests
-        working-directory: ./backend/apps/ugc_api
+          docker-compose -f docker-compose.test.yml run --service-ports --rm --build ugc_api_test
+        working-directory: ./backend/apps/ugc_api/tests
 
       - name: Notify to telegram
         if: cancelled() == false

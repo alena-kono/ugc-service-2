@@ -1,4 +1,4 @@
-FROM python:3.11-slim AS base-build
+FROM python:3.10-slim AS base-build
 
 ARG APP_PATH=/opt/app
 ARG USER=backend-usr
@@ -79,4 +79,4 @@ RUN poetry install --with dev
 
 USER ${USER}:${GROUP}
 
-CMD ["pytest"]
+CMD ["pytest", "tests/"]

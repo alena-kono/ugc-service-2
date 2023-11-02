@@ -33,16 +33,7 @@ def event_loop():
 @pytest_asyncio.fixture(scope="function")
 async def db_session():
     mongodb = AsyncIOMotorClient(settings.mongo.dsn)
-    producer = AIOKafkaProducer(
-        bootstrap_servers=settings.kafka.dsn,
-        compression_type="gzip",
-        enable_idempotence=True,
-        max_batch_size=32768,
-        linger_ms=1000,
-        request_timeout_ms=10000,
-        retry_backoff_ms=1000,
-    )
-    await producer.start()
+    producer = mock.AsyncMock()
 
     def get_test_mongodb() -> AgnosticClient:
         if mongodb is None:
