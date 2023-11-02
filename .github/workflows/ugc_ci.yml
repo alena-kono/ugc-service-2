@@ -42,10 +42,6 @@ jobs:
           poetry run flake8 src/ tests/
         working-directory: ./backend/apps/ugc_api
       
-      # - name: Check compose version
-      #   run: |
-      #     docker compose -v
-
       - name: Run mypy static check
         run: |
           poetry run mypy

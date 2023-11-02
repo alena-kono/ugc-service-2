@@ -26,7 +26,7 @@ async def test_create_film_progress(client: AsyncClient, db_session: AgnosticCli
         headers={"X-Request-Id": "test", "Authorization": "Bearer test_jwt"},
     )
 
-    assert response.status_code == 0
+    assert response.status_code == 200
 
     created_event = response.json()
     assert created_event["film_id"] == test_event["film_id"]
