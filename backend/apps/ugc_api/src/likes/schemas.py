@@ -1,8 +1,6 @@
-from typing_extensions import Self
-
 from pydantic import Field
-
 from src.common.schemas import BaseMongoSchema, BaseSchema
+from typing_extensions import Self
 
 
 class LikeBaseRequestSchema(BaseSchema):

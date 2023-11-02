@@ -1,6 +1,6 @@
-class BaseUGCException(Exception):
+class BaseUGCException(Exception):  # noqa: N818
     pass
 
 
-class BatchInsertException(BaseUGCException):
+class BatchInsertException(BaseUGCException):  # noqa: N818
     pass

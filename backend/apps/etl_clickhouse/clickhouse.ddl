@@ -8,4 +8,3 @@ CREATE TABLE IF NOT EXISTS ugc_analytics.ugc_film_views (
 )
 Engine=MergeTree()
 ORDER BY (user_id, film_id, timestamp);
-

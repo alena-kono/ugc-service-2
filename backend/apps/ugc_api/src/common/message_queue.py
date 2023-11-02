@@ -1,8 +1,8 @@
 import asyncio
 from abc import ABC, abstractmethod
 
-from async_timeout import timeout
 from aiokafka import AIOKafkaProducer
+from async_timeout import timeout
 from fastapi import HTTPException
 
 

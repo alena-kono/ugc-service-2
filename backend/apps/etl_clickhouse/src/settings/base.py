@@ -2,7 +2,6 @@ from pathlib import Path
 
 import pydantic
 
-
 ENV_DIR = Path(__file__).resolve().parent.parent.parent.joinpath(".env")
 
 

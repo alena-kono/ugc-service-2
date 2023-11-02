@@ -1,0 +1,66 @@
+version: "3.8"
+
+services:
+
+  ugc_api_test:
+    build:
+      context: ../
+      target: test-build
+    env_file:
+      - .env.test
+    depends_on:
+      - redis
+      - mongos
+    networks:
+      - app
+
+  redis:
+    image: redis:7.0.11
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    networks:
+      - app
+
+  mongors:
+    container_name: mongors1n1
+    image: mongo
+    command: mongod --shardsvr --replSet mongors --dbpath /data/db --port 27017
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - mongors:/data/db
+    networks:
+      - app
+
+  mongocfg:
+    container_name: mongocfg1
+    image: mongo
+    command: mongod --configsvr --replSet mongorsconf --dbpath /data/db --port 27017
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - mongocfg:/data/db
+    networks:
+      - app
+
+  mongos:
+    container_name: mongos1
+    image: mongo
+    depends_on:
+      - mongocfg
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - app
+
+volumes:
+  mongors:
+  mongocfg:
+
+networks:
+  app:

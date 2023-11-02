@@ -1,12 +1,10 @@
 import logging
 import time
-
 from enum import StrEnum, unique
 from typing import Any
 
-from src.settings.base import BaseAppSettings
-
 import pydantic
+from src.settings.base import BaseAppSettings
 
 
 @unique
@@ -22,11 +20,12 @@ logging.Formatter.converter = time.gmtime
 
 
 class LoggingSettings(BaseAppSettings):
-
     class Config:
         use_enum_values: bool = True
 
-    level: LoggerLevelType = pydantic.Field(env="LOGGING_LEVEL", default=LoggerLevelType.INFO)
+    level: LoggerLevelType = pydantic.Field(
+        env="LOGGING_LEVEL", default=LoggerLevelType.INFO
+    )
 
     @property
     def config(self) -> dict[str, Any]:
@@ -45,10 +44,5 @@ class LoggingSettings(BaseAppSettings):
                     "formatter": "default",
                 },
             },
-            "loggers": {
-                "": {
-                    "handlers": ["console"],
-                    "level": self.level
-                }
-            }
+            "loggers": {"": {"handlers": ["console"], "level": self.level}},
         }

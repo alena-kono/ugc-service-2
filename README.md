@@ -7,11 +7,11 @@ Find more information about the experiment [here](backend/research/clickhouse_vs
 Find additional 3rd party comparison information [here](backend/research/clickhouse_vs_vertica/Performance-comparison-of-SQL-based-Columnar-Database-Systems-.pdf)
 
 ### Clickhouse:
-Description: simple table 4 nodes 
+Description: simple table 4 nodes
 
-Insert test:    
+Insert test:  
 * batch_size = 1000 rows
-* batch_numbers = 1000 
+* batch_numbers = 1000
 * Average insert time: 0.01610767674446106 sec
 * Total time: 19.779046058654785 sec
 
@@ -24,7 +24,7 @@ description: jbfavre/vertica:latest image
 
 Insert test:
 * batch_size = 1000 rows
-* batch_numbers = 1000 
+* batch_numbers = 1000
 * Averae insert time: 0.05144338369369507 sec
 * Total time: 56.20524001121521 sec
 
@@ -58,12 +58,12 @@ Find more information about the experiment [here](backend/research/mongo_vs_all/
 
 #### Read batch test
 * Batch size = 1000.
-* Reads Number = 1000 times 
+* Reads Number = 1000 times
 * Average select time: 0.012428301582986023 sec
 
 ## Aggregation test
-* query: `SELECT user_id, COUNT(*) as count FROM collection.test_collection GROUP BY user_id ORDER BY count DESC LIMIT 10` 
-* Reads Number = 10 times 
+* query: `SELECT user_id, COUNT(*) as count FROM collection.test_collection GROUP BY user_id ORDER BY count DESC LIMIT 10`
+* Reads Number = 10 times
 * Average select time: 0.17657093749730848 sec
 
 ### MongoDB
@@ -74,12 +74,12 @@ Find more information about the experiment [here](backend/research/mongo_vs_all/
 
 #### Read batch test
 * Batch size = 1000.
-* Reads Number = 1000 times 
+* Reads Number = 1000 times
 * Average select time: 0.005184496374975424 sec
 
 ## Aggregation test
 * query: [{"$group": {"_id": "$user_id", "count": {"$sum": 1}}}, {"$sort": {"count": -1}}, {"$limit": 10}]
-* Reads Number = 10 times 
+* Reads Number = 10 times
 * Average aggregate time: 3.495923020900227 sec
 
 

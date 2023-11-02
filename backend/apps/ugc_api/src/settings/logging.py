@@ -1,9 +1,11 @@
 import datetime
+import pathlib
 import typing as tp
 from enum import Enum
 
 import pydantic
 import structlog
+
 from src.settings.base import BaseAppSettings
 
 LoggerProcessors = (
@@ -12,7 +14,8 @@ LoggerProcessors = (
             [tp.Any, str, tp.MutableMapping[str, tp.Any]],
             tp.Mapping[str, tp.Any] | str | bytes | bytearray | tuple[tp.Any, ...],
         ]
-    ] | None
+    ]
+    | None  # noqa: W503
 )
 
 
@@ -32,11 +35,12 @@ class LoggingSettings(BaseAppSettings):
         env="LOGGING_LEVEL", default=LoggerLevelType.DEBUG
     )
     file_path_json: str = pydantic.Field(
-        env="LOGGING_FILE_PATH_JSON", default="../../../logs/apps/ugc_api.log"
+        env="LOGGING_FILE_PATH_JSON", default="../../../logs/apps/ugc_api/ugc_api.log"
     )
 
     @property
     def config(self) -> dict[str, tp.Any]:
+        pathlib.Path(self.file_path_json).parent.mkdir(parents=True, exist_ok=True)
         return {
             "version": 1,
             "disable_existing_loggers": False,
